@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "safari-mcp"
+version = "0.1.0"
+description = "Drive Safari.app on macOS (navigate, read, click, fill) via JavaScript for Automation -- as a CLI, Python library, and MCP server."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "zhuhroscar-tech" }]
+requires-python = ">=3.10"
+keywords = ["safari", "macos", "automation", "browser", "mcp", "jxa", "applescript", "cli"]
+classifiers = [
+  "Environment :: Console",
+  "Environment :: MacOS X",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: MacOS :: MacOS X",
+  "Programming Language :: Python :: 3",
+  "Topic :: Internet :: WWW/HTTP :: Browsers",
+  "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+  "mcp>=1.0,<3",
+]
+
+[project.urls]
+Homepage = "https://github.com/zhuhroscar-tech/safari-mcp"
+Issues = "https://github.com/zhuhroscar-tech/safari-mcp/issues"
+
+[project.scripts]
+safari-mcp = "safari_mcp.cli:main"
+safari-mcp-server = "safari_mcp.mcp_server:main"
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
