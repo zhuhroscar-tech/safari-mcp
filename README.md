@@ -1,5 +1,17 @@
 # safari-mcp
 
+[![CI](https://github.com/zhuhroscar-tech/safari-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/zhuhroscar-tech/safari-mcp/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/zhuhroscar-tech/safari-mcp?include_prereleases&label=release)](https://github.com/zhuhroscar-tech/safari-mcp/releases/latest)
+![macOS](https://img.shields.io/badge/macOS-required-111111?logo=apple)
+
+## Simple explanation
+
+safari-mcp lets an AI agent or script drive your real, already-logged-in
+Safari browser — clicking, reading pages, and filling forms as if you
+were doing it yourself, with your existing cookies and sessions intact.
+It's for anyone who wants an agent to act *as them* in Safari, instead of
+spinning up a separate, signed-out automation browser.
+
 Drive Safari.app on macOS — navigate, read page content, click, and fill
 forms — from an MCP-capable agent (Claude, Hermes, any MCP host), a CLI,
 or a plain Python library. Uses Apple's own JavaScript for Automation
