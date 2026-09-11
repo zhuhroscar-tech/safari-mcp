@@ -101,17 +101,11 @@ documents its exact behavior and return shape.
 
 ## Use as a CLI
 
+![safari-mcp example output](docs/images/example-output.png)
+
 ```bash
 safari-mcp tabs                                    # list every open tab
 safari-mcp open "https://example.com"               # navigate current tab
-safari-mcp open "https://example.com" --new-tab     # open in a new tab
-safari-mcp read                                     # print URL/title/visible text
-safari-mcp read --html                              # also include full outerHTML
-safari-mcp js "document.title"                      # run arbitrary JS, print result
-safari-mcp click "#submit"                          # click a CSS selector
-safari-mcp fill "#email" "me@example.com"           # fill an input
-safari-mcp exists ".error-banner"                   # check a selector
-safari-mcp wait ".results" --timeout 5              # poll for a selector
 ```
 
 All read/click/fill/exists/wait commands accept `--window N --tab M` to
