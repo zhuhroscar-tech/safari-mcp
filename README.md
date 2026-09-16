@@ -1,182 +1,76 @@
+[![English](https://img.shields.io/badge/English-555555?style=flat)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-555555?style=flat)](README.zh-CN.md)
+
 # safari-mcp
 
-[![CI](https://github.com/zhuhroscar-tech/safari-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/zhuhroscar-tech/safari-mcp/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/zhuhroscar-tech/safari-mcp?include_prereleases&label=release)](https://github.com/zhuhroscar-tech/safari-mcp/releases/latest)
-![macOS](https://img.shields.io/badge/macOS-required-111111?logo=apple)
+Control your real Safari.app session on macOS through an MCP server, CLI, or Python library. The project uses Apple's JavaScript for Automation (JXA) to navigate tabs, read pages, run JavaScript, click CSS-selected elements, and fill forms.
 
-## Simple explanation
+**This is your existing signed-in browser, not an isolated automation profile.** Actions can affect real accounts and pages. Connect only trusted agents and review consequential actions before execution.
 
-safari-mcp lets an AI agent or script drive your real, already-logged-in
-Safari browser — clicking, reading pages, and filling forms as if you
-were doing it yourself, with your existing cookies and sessions intact.
-It's for anyone who wants an agent to act *as them* in Safari, instead of
-spinning up a separate, signed-out automation browser.
+## Install and permissions
 
-Drive Safari.app on macOS — navigate, read page content, click, and fill
-forms — from an MCP-capable agent (Claude, Hermes, any MCP host), a CLI,
-or a plain Python library. Uses Apple's own JavaScript for Automation
-(JXA), so it drives your **real, already-logged-in Safari window**:
-existing cookies, sessions, extensions, and tabs — not a separate
-automation profile you'd have to log into again.
-
-## Why this exists
-
-Every popular browser-automation stack (Playwright, Puppeteer, Selenium,
-`browser-use`) targets Chromium's DevTools Protocol or WebDriver. Safari
-has neither. If your default browser is Safari, or you specifically want
-an agent to act *as you, in your actual signed-in session* rather than
-spin up an isolated Chromium profile, none of those tools apply. Apple
-ships a real, supported automation surface for exactly this —
-`osascript -l JavaScript` driving `Application("Safari")` — but it's raw
-AppleScript/JXA with no MCP wrapper. This project is that wrapper.
-
-## What this does NOT do
-
-- **No screenshotting / pixel-level interaction.** JXA drives the DOM via
-  JavaScript, not the rendered pixels — there's no `click_at_xy` here.
-  If you need visual/pixel automation, pair this with `screencapture` and
-  a separate coordinate-clicking tool (e.g. `cliclick`), which this
-  project deliberately does not bundle to stay focused.
-- **No sandboxed/incognito session.** By design, this reuses your real
-  Safari session. If you want isolation, use a Chromium-based automation
-  tool instead — that's a feature, not a gap, but state it up front so
-  nobody is surprised their real cookies are visible to the agent.
-- **macOS + Safari only.** JXA is an Apple-only automation technology;
-  there is no equivalent way to drive Safari from Linux/Windows.
-
-## Install
-
-Requires macOS and Python 3.10+.
+Requires macOS, Safari, and Python 3.10+. pip installs the MCP dependency.
 
 ```bash
-pip install --user safari-mcp
-```
-
-or from source:
-
-```bash
-git clone https://github.com/zhuhroscar-tech/safari-mcp
+git clone https://github.com/zhuhroscar-tech/safari-mcp.git
 cd safari-mcp
-pip install --user .
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
 ```
 
-### One-time macOS permissions
+Enable both permissions:
 
-Two separate permission grants are required, each a normal macOS system
-dialog the first time you run a command:
+1. Allow the launching terminal/app to control Safari under **System Settings → Privacy & Security → Automation** when prompted.
+2. In Safari Settings → Advanced, enable **Show features for web developers**, then select **Develop → Allow JavaScript from Apple Events**. This is required for page JavaScript operations; tab listing, opening, and closing do not require it.
 
-1. **Automation permission** (System Settings → Privacy & Security →
-   Automation): the app/terminal running `safari-mcp` needs "Allow" next
-   to Safari. macOS prompts for this automatically on first use.
-2. **"Allow JavaScript from Apple Events"** in Safari itself: Safari menu
-   → Settings → Advanced → enable "Show features for web developers",
-   then Safari's Develop menu → check "Allow JavaScript from Apple
-   Events". This is required for `read`, `js`, `click`, `fill`, `exists`,
-   and `wait` (anything that runs JavaScript in the page) — `open`,
-   `tabs`, and `close` work without it.
+## Connect an MCP host
 
-Every command here raises a clear, actionable error naming exactly which
-of these two permissions is missing, rather than a bare AppleEvent error
-number.
-
-## Use as an MCP server
-
-Add to your MCP host's config (Claude Desktop, Hermes, etc.) as a stdio
-server:
+For hosts using `mcpServers` configuration:
 
 ```json
 {
   "mcpServers": {
     "safari": {
-      "command": "safari-mcp-server"
+      "command": "/absolute/path/to/safari-mcp/.venv/bin/safari-mcp-server"
     }
   }
 }
 ```
 
-Tools exposed: `safari_tabs`, `safari_open`, `safari_close`, `safari_read`,
-`safari_js`, `safari_click`, `safari_fill`, `safari_element_exists`,
-`safari_wait_for`. Every tool's docstring (visible to the calling agent)
-documents its exact behavior and return shape.
+Replace the path with your installation's executable. The server uses stdio and exposes `safari_tabs`, `safari_open`, `safari_close`, `safari_read`, `safari_js`, `safari_click`, `safari_fill`, `safari_element_exists`, and `safari_wait_for`.
 
-## Use as a CLI
-
-![safari-mcp example output](docs/images/example-output.png)
+## CLI and Python
 
 ```bash
-safari-mcp tabs                                    # list every open tab
-safari-mcp open "https://example.com"               # navigate current tab
+safari-mcp tabs
+safari-mcp open "https://example.com" --new-tab
+safari-mcp read --json
+safari-mcp read --window 1 --tab 1
 ```
 
-All read/click/fill/exists/wait commands accept `--window N --tab M` to
-target a specific tab instead of the frontmost window's current tab.
-
-## Use as a Python library
+Targeted commands default to the frontmost window's current tab. Window and tab indices are one-based; use `--help` for supported targeting flags.
 
 ```python
-from safari_mcp.core import open_url, read_page, click, fill
+from safari_mcp.core import list_tabs, read_page
 
-tab = open_url("https://example.com")
+print(list_tabs())
 page = read_page()
 print(page.title, page.text[:100])
-
-click("#menu-button")
-fill("#search", "hello world")
 ```
 
-Every function accepts an injectable `runner` (defaults to
-`subprocess.run`) for testing without a real Safari instance.
+## Boundaries
 
-## A real navigation race this project fixes (and why it matters)
+This is DOM automation, not screenshot or coordinate-based interaction. There is no sandbox or incognito isolation, and no Linux/Windows support. The wrapper has no telemetry or separate network client, but browser navigation and page actions can send network requests and change account state. Page content passed to an agent is subject to that host's data handling.
 
-Safari's `tab.name()`/`tab.url()` AppleScript properties, and even
-`document.readyState`, report stale/placeholder values for a brief window
-immediately after navigation: a brand-new tab's `about:blank` placeholder
-document already has a `<body>` and already reports `readyState ===
-'complete'` *before* the real page has loaded. A naive
-`wait_for_selector("body")` after opening a URL will very often return
-immediately against the blank placeholder, and the caller gets `title:
-"Untitled"` even though the real page loads correctly moments later.
+## Preview and development
 
-`open_url()` instead polls until `document.readyState === 'complete'`
-**and** the URL differs from the pre-navigation URL (or `about:blank` for
-a new tab), so the title and content you get back are always for the
-actual destination page. This was caught by hands-on testing against real
-Safari, not assumed from the API docs — the fix and its regression tests
-are in `src/safari_mcp/core.py` (`wait_for_page_load`).
-
-## Privacy / permissions
-
-No network access of its own, no telemetry. Every function is a thin
-wrapper around `osascript -l JavaScript` calling either AppleScript-level
-Safari properties (`tabs`, `windows`, `url`, `name`) or
-`Safari.doJavaScript()` to run JS in the page you already have open. It
-never installs a browser extension, never modifies Safari's settings
-beyond what you explicitly ask it to do on a page, and never touches any
-tab other than the one you target.
-
-## Development
+[Example output](docs/images/example-output.png) · [Demo video](docs/demo.mp4)
 
 ```bash
-git clone https://github.com/zhuhroscar-tech/safari-mcp
-cd safari-mcp
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-pytest -v                              # unit tests, no real Safari needed
-python3 tests/e2e_mcp_roundtrip.py     # real MCP client <-> real Safari (requires Safari open + permissions granted)
+python -m pip install -e ".[dev]"
+python -m pytest -v
+# Optional: real Safari; requires permissions and an open browser
+python tests/e2e_mcp_roundtrip.py
 ```
 
-CI (`.github/workflows/ci.yml`) runs on `macos-latest` GitHub Actions
-runners and covers unit tests (all Safari interaction mocked), CLI
-`--help`/`--version` smoke tests, the MCP server module importing
-cleanly, and a built-wheel install-and-run check. It does **not** run the
-live Safari e2e test above: a fresh CI runner has never granted the
-Automation/"Allow JavaScript from Apple Events" permissions (they require
-an interactive dialog), so CI cannot prove live Safari behavior — that
-verification is manual, done on a real macOS machine with Safari open and
-permissions already granted (see this project's own development history
-for exactly which bugs that caught, e.g. the navigation race below).
-
-## License
-
-MIT — see [LICENSE](LICENSE).
+[CI](.github/workflows/ci.yml) tests mocked Safari interaction and packaging; it does not establish live Safari behavior. [API implementation](src/safari_mcp/core.py) · [MIT license](LICENSE)
