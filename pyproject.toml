@@ -34,7 +34,7 @@ safari-mcp = "safari_mcp.cli:main"
 safari-mcp-server = "safari_mcp.mcp_server:main"
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "tomli; python_version < '3.11'"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
