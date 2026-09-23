@@ -1,13 +1,14 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "safari-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "Drive Safari.app on macOS (navigate, read, click, fill) via JavaScript for Automation -- as a CLI, Python library, and MCP server."
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "zhuhroscar-tech" }]
 requires-python = ">=3.10"
 keywords = ["safari", "macos", "automation", "browser", "mcp", "jxa", "applescript", "cli"]
@@ -15,7 +16,6 @@ classifiers = [
   "Environment :: Console",
   "Environment :: MacOS X",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: MacOS :: MacOS X",
   "Programming Language :: Python :: 3",
   "Topic :: Internet :: WWW/HTTP :: Browsers",

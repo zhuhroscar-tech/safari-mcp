@@ -1,5 +1,7 @@
 import json
 import subprocess
+import tomllib
+from pathlib import Path
 
 import pytest
 
@@ -222,6 +224,17 @@ def test_wait_for_page_load_times_out_on_persistent_blank():
     finally:
         time_mod.monotonic = orig
     assert result is False
+
+
+def test_project_metadata_uses_current_spdx_license_format():
+    pyproject = Path(__file__).resolve().parents[1] / "pyproject.toml"
+    project = tomllib.loads(pyproject.read_text())["project"]
+
+    assert project["license"] == "MIT"
+    assert project["license-files"] == ["LICENSE"]
+    assert not any(c.startswith("License ::") for c in project.get("classifiers", []))
+    build_requires = tomllib.loads(pyproject.read_text())["build-system"]["requires"]
+    assert "setuptools>=77" in build_requires
 
 
 def test_close_tab_runs_without_error():
