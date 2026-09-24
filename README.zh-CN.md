@@ -73,4 +73,4 @@ python -m pytest -v
 python tests/e2e_mcp_roundtrip.py
 ```
 
-[CI](.github/workflows/ci.yml) 检查 mock Safari 交互和打包，不证明真实 Safari 的运行表现。[API 实现](src/safari_mcp/core.py) · [MIT 许可证](LICENSE)
+[CI](.github/workflows/ci.yml) 检查 mock Safari 交互和打包，不证明真实 Safari 的运行表现。[API 实现](src/safari_mcp/core.py) · [发布历史](CHANGELOG.md) · [MIT 许可证](LICENSE)

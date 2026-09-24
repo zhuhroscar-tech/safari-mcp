@@ -27,6 +27,8 @@ def test_required_project_files_exist():
         "LICENSE",
         "README.md",
         "README.zh-CN.md",
+        "CHANGELOG.md",
+        "MANIFEST.in",
         "pyproject.toml",
         ".github/workflows/ci.yml",
         "src/safari_mcp/core.py",
@@ -79,3 +81,39 @@ def test_version_is_consistent_between_package_and_pyproject():
 
     assert match is not None
     assert match.group(1) == project["version"]
+
+
+def test_readmes_link_release_history_and_license():
+    for readme in README_FILES:
+        markdown = readme.read_text(encoding="utf-8")
+        assert "CHANGELOG.md" in markdown
+        assert "LICENSE" in markdown
+
+
+def test_changelog_documents_current_version_and_order():
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    current = f"## v{project['version']}"
+
+    assert current in changelog
+    assert changelog.index("## v0.1.3") < changelog.index("## v0.1.2") < changelog.index("## v0.1.1")
+
+
+def test_source_distribution_manifest_includes_release_metadata():
+    manifest = (ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+
+    for required in [
+        "include CHANGELOG.md",
+        "include README.zh-CN.md",
+        "include .github/workflows/ci.yml",
+        "recursive-include tests *.py",
+        "recursive-include docs *.png *.mp4",
+    ]:
+        assert required in manifest
+
+
+def test_ci_runs_for_main_and_version_tags():
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+
+    assert "branches: [main]" in workflow
+    assert 'tags: ["v*"]' in workflow

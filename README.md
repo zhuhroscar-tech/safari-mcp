@@ -73,4 +73,4 @@ python -m pytest -v
 python tests/e2e_mcp_roundtrip.py
 ```
 
-[CI](.github/workflows/ci.yml) tests mocked Safari interaction and packaging; it does not establish live Safari behavior. [API implementation](src/safari_mcp/core.py) · [MIT license](LICENSE)
+[CI](.github/workflows/ci.yml) tests mocked Safari interaction and packaging; it does not establish live Safari behavior. [API implementation](src/safari_mcp/core.py) · [Release history](CHANGELOG.md) · [MIT license](LICENSE)

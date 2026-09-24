@@ -1,8 +1,10 @@
 .venv/
+.smoke-*/
 __pycache__/
 *.pyc
 .pytest_cache/
 build/
 dist/
+dist_*/
 *.egg-info/
 src/*.egg-info/
