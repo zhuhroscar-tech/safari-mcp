@@ -83,6 +83,15 @@ def test_version_is_consistent_between_package_and_pyproject():
     assert match.group(1) == project["version"]
 
 
+def test_package_metadata_links_maintenance_resources():
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    urls = project["urls"]
+
+    assert urls["Homepage"] == "https://github.com/zhuhroscar-tech/safari-mcp"
+    assert urls["Issues"] == "https://github.com/zhuhroscar-tech/safari-mcp/issues"
+    assert urls["Changelog"] == "https://github.com/zhuhroscar-tech/safari-mcp/blob/main/CHANGELOG.md"
+
+
 def test_readmes_link_release_history_and_license():
     for readme in README_FILES:
         markdown = readme.read_text(encoding="utf-8")
@@ -96,7 +105,7 @@ def test_changelog_documents_current_version_and_order():
     current = f"## v{project['version']}"
 
     assert current in changelog
-    assert changelog.index("## v0.1.3") < changelog.index("## v0.1.2") < changelog.index("## v0.1.1")
+    assert changelog.index("## v0.1.4") < changelog.index("## v0.1.3") < changelog.index("## v0.1.2")
 
 
 def test_source_distribution_manifest_includes_release_metadata():

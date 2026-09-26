@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "safari-mcp"
-version = "0.1.3"
+version = "0.1.4"
 description = "Drive Safari.app on macOS (navigate, read, click, fill) via JavaScript for Automation -- as a CLI, Python library, and MCP server."
 readme = "README.md"
 license = "MIT"
@@ -28,6 +28,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/zhuhroscar-tech/safari-mcp"
 Issues = "https://github.com/zhuhroscar-tech/safari-mcp/issues"
+Changelog = "https://github.com/zhuhroscar-tech/safari-mcp/blob/main/CHANGELOG.md"
 
 [project.scripts]
 safari-mcp = "safari_mcp.cli:main"

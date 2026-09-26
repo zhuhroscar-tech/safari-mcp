@@ -2,6 +2,12 @@
 
 All notable changes to `safari-mcp` are documented here.
 
+## v0.1.4 — 2026-09-26
+
+- Added a package metadata link to the changelog alongside the existing homepage and issue tracker links.
+- Added repository-contract coverage for package maintenance URLs.
+- Bumped package/runtime version to `0.1.4`.
+
 ## v0.1.3 — 2026-09-24
 
 - Added release-history documentation and repository-contract checks.
